@@ -393,6 +393,13 @@ func (r *Table) MustAddRows(rows [][]any) *Table {
 	return r
 }
 
+func (r *Table) ClearRows() *Table {
+	r.rows = [][]any{}
+	r.applyFilter()
+	r.setRowsUpdate()
+	return r
+}
+
 // OrderByColumn orders rows by a column with the index n, simple bubble sort, nothing too fancy
 // does not apply when there is less than 2 row in a table
 // TODO: this messes up numbering that one might use, implement automatic indexing of rows
