@@ -142,6 +142,9 @@ type Table struct {
 	// these flags indicate weather we should update rows and headers flex boxes
 	updateRowsFlag    bool
 	updateHeadersFlag bool
+
+	// Adds a title to the upper header row
+	title string
 }
 
 // NewTable initialize Table object with defaults
@@ -440,15 +443,21 @@ func (r *Table) Render() string {
 		r.rowsBox.GetWidth(),
 		r.rowsBox.GetHeight(),
 	)
+
 	if r.cursorIndexX == r.filteredColumn {
 		statusMessage = fmt.Sprintf("filtered by: %q / %s", r.filterString, statusMessage)
 	}
+	// TODO: Integrate statusMessage line to headersBox, since it is now used as a title
+	statusMessage = fmt.Sprintf("%-*s%*s",
+		r.headerBox.GetWidth()-len(statusMessage), strings.TrimSpace(r.GetTitle()),
+		len(statusMessage), statusMessage,
+	)
 
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
+		r.styles[TableFooterStyleKey].Width(r.width).Render(statusMessage),
 		r.headerBox.Render(),
 		r.rowsBox.Render(),
-		r.styles[TableFooterStyleKey].Width(r.width).Render(statusMessage),
 	)
 }
 
@@ -845,4 +854,14 @@ func sortIndex[T Ordered](slice []T, order TableSortingOrderKey) []int {
 		}
 	}
 	return index
+}
+
+// SetTitle updates the table's title
+func (r *Table) SetTitle(title string) {
+	r.title = title
+}
+
+// GetTitle returns the current title
+func (r *Table) GetTitle() string {
+	return r.title
 }
