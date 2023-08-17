@@ -3,6 +3,7 @@ package table
 import (
 	"errors"
 	"fmt"
+	"golang.org/x/exp/maps"
 	"log"
 	"math"
 	"reflect"
@@ -268,7 +269,7 @@ func (r *Table) SetWidth(value int) *Table {
 // SetStyles allows overrides of styling elements of the table
 // When only a partial set of overrides are provided, the default styling will be used
 func (r *Table) SetStyles(styles map[TableStyleKey]lipgloss.Style) *Table {
-	mergedStyles := tableDefaultStyles
+	mergedStyles := maps.Clone(tableDefaultStyles)
 	for key, style := range styles {
 		mergedStyles[key] = style
 	}
