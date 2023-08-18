@@ -328,7 +328,7 @@ func (r *Table) CursorDown() *Table {
 
 // CursorUp move table cursor up
 func (r *Table) CursorUp() *Table {
-	if r.cursorIndexY-1 > -1 {
+	if r.cursorIndexY > 0 {
 		r.cursorIndexY--
 		r.setTopRow()
 		r.setRowsUpdate()
@@ -338,7 +338,7 @@ func (r *Table) CursorUp() *Table {
 
 // CursorLeft move table cursor left
 func (r *Table) CursorLeft() *Table {
-	if r.cursorIndexX-1 > -1 {
+	if r.cursorIndexX > 0 {
 		r.cursorIndexX--
 		// TODO: update row only
 		r.setRowsUpdate()
@@ -359,6 +359,35 @@ func (r *Table) CursorRight() *Table {
 // GetCursorLocation returns the current x,y position of the cursor
 func (r *Table) GetCursorLocation() (int, int) {
 	return r.cursorIndexX, r.cursorIndexY
+}
+
+func (r *Table) SetCursorRow(row int) {
+	if row > len(r.filteredRows) {
+		r.cursorIndexY = len(r.filteredRows) - 1
+	} else if row < 0 {
+		r.cursorIndexY = 0
+	} else {
+		r.cursorIndexY = row
+	}
+	r.setTopRow()
+	r.setRowsUpdate()
+}
+
+func (r *Table) SetCursorCol(col int) {
+	if col > len(r.columnHeaders) {
+		r.cursorIndexX = len(r.columnHeaders) - 1
+	} else if col < 0 {
+		r.cursorIndexX = 0
+	} else {
+		r.cursorIndexX = col
+	}
+	r.setRowsUpdate()
+}
+
+// SetCursorLocation returns the current x,y position of the cursor
+func (r *Table) SetCursorLocation(x int, y int) {
+	r.SetCursorRow(y)
+	r.SetCursorCol(x)
 }
 
 // GetCursorValue returns the string of the cell under the cursor
